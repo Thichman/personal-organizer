@@ -1,31 +1,63 @@
-'use client';
+"use client";
+import { Calendar, dateFnsLocalizer } from "react-big-calendar";
+import { format } from "date-fns/format";
+import { parse } from "date-fns/parse";
+import { startOfWeek } from "date-fns/startOfWeek";
+import { getDay } from "date-fns/getDay";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import { Todo } from "@/app/generated/prisma";
+import { getTodos } from "@/queries/todos";
+import { useEffect, useState } from "react";
 
-import { useState } from 'react';
-import Calendar from 'react-calendar';
-import { Value } from '@/types/calendar';
-import 'react-calendar/dist/Calendar.css';
-import './calendarStyles.css';
+const locales = {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  "en-US": require("date-fns/locale/en-US"),
+};
+
+const localizer = dateFnsLocalizer({
+  format,
+  parse,
+  startOfWeek,
+  getDay,
+  locales,
+});
 
 export default function CalendarPage() {
-    const [value, onChange] = useState<Value>(new Date());
+  const [todos, setTodos] = useState<Todo[]>([]);
+  useEffect(() => {
+    const fetchTodos = async () => {
+      setTodos(await getTodos());
+    };
+    fetchTodos();
+  }, []);
 
-    return (
-        <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white flex items-center justify-center px-4">
-            <div className="p-8 bg-gray-800 rounded-3xl shadow-2xl max-w-md w-full">
-                <h1 className="text-3xl font-bold text-center mb-6">📅 Calendar</h1>
-                <Calendar
-                    onChange={onChange}
-                    value={value}
-                    locale="en-US"
-                    className="react-calendar rounded-xl w-full"
-                    tileClassName={({ date }) =>
-                        `text-sm py-2 transition hover:bg-blue-500 hover:text-white rounded-lg ${date.toDateString() === new Date().toDateString()
-                            ? 'bg-blue-600 text-white font-semibold'
-                            : 'text-white'
-                        }`
-                    }
-                />
-            </div>
-        </div>
-    );
+  const events = todos
+    .filter((todo) => todo.date_due)
+    .map((todo) => ({
+      title: todo.item,
+      start: todo.date_due ? new Date(todo.date_due) : null,
+      end: todo.date_due
+        ? new Date(new Date(todo.date_due).getTime() + 60 * 60 * 1000)
+        : null,
+    }));
+
+  return (
+    <div className="h-screen p-4 bg-gray-900 text-white">
+      <h1 className="text-3xl font-bold mb-4 text-center">📅 Weekly View</h1>
+      <Calendar
+        localizer={localizer}
+        events={events}
+        defaultView="week"
+        views={["week", "month"]}
+        startAccessor="start"
+        endAccessor="end"
+        style={{
+          height: "80vh",
+          backgroundColor: "white",
+          color: "black",
+          borderRadius: "12px",
+        }}
+      />
+    </div>
+  );
 }

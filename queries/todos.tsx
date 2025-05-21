@@ -1,4 +1,4 @@
-'use server'
+"use server";
 
 import type { Todo } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
@@ -8,9 +8,8 @@ import prisma from "@/lib/prisma";
  * @returns A promise resolving to an array of Todo objects
  */
 export async function getTodos(): Promise<Todo[]> {
-    return await prisma.todo.findMany({});
+  return await prisma.todo.findMany({});
 }
-
 
 /**
  * Creates a new Todo item in the database.
@@ -20,19 +19,19 @@ export async function getTodos(): Promise<Todo[]> {
  * @throws {Error} If there is a problem with the database query
  */
 export const addItem = async (item: string, table: string) => {
-    try {
-        await prisma.todo.create({
-            data: {
-                item: item,
-                table: table,
-                priority: 'Low'
-            }
-        })
-    } catch (error) {
-        console.error(error)
-        throw error
-    }
-}
+  try {
+    await prisma.todo.create({
+      data: {
+        item: item,
+        table: table,
+        priority: "Low",
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
 
 /**
  * Updates a Todo item in the database.
@@ -42,15 +41,15 @@ export const addItem = async (item: string, table: string) => {
  * @throws {Error} If there is a problem with the database query
  */
 export const updateItem = async (id: number, done: boolean) => {
-    await prisma.todo.update({
-        where: {
-            id: id
-        },
-        data: {
-            done: done
-        }
-    })
-}
+  await prisma.todo.update({
+    where: {
+      id: id,
+    },
+    data: {
+      done: done,
+    },
+  });
+};
 
 /**
  * Updates a Todo item in the database.
@@ -60,15 +59,15 @@ export const updateItem = async (id: number, done: boolean) => {
  * @throws {Error} If there is a problem with the database query
  */
 export const updateHidden = async (id: number, hidden: boolean) => {
-    await prisma.todo.update({
-        where: {
-            id: id
-        },
-        data: {
-            hidden: hidden
-        }
-    })
-}
+  await prisma.todo.update({
+    where: {
+      id: id,
+    },
+    data: {
+      hidden: hidden,
+    },
+  });
+};
 
 /**
  * Updates a Todo item in the database.
@@ -78,44 +77,58 @@ export const updateHidden = async (id: number, hidden: boolean) => {
  * @throws {Error} If there is a problem with the database query
  */
 export const updateDone = async (id: number, done: boolean) => {
-    await prisma.todo.update({
-        where: {
-            id: id
-        },
-        data: {
-            done: done
-        }
-    })
-}
+  await prisma.todo.update({
+    where: {
+      id: id,
+    },
+    data: {
+      done: done,
+    },
+  });
+};
 
 export const updatePriority = async (id: number, priority: string) => {
-    await prisma.todo.update({
-        where: {
-            id: id
-        },
-        data: {
-            priority: priority
-        }
-    })
-}
+  await prisma.todo.update({
+    where: {
+      id: id,
+    },
+    data: {
+      priority: priority,
+    },
+  });
+};
 
 export const updateNotes = async (id: number, notes: string) => {
-    await prisma.todo.update({
-        where: {
-            id: id
-        },
-        data: {
-            notes: notes
-        }
-    })
-}
+  await prisma.todo.update({
+    where: {
+      id: id,
+    },
+    data: {
+      notes: notes,
+    },
+  });
+};
 
-// This needs to be updated
 export const updateDateDue = async (id: number, date_due: Date | string) => {
-    await prisma.todo.update({
-        where: { id },
-        data: {
-            date_due: date_due,
-        },
-    });
+  const parsedDate =
+    typeof date_due === "string" ? new Date(date_due) : date_due;
+  if (!(parsedDate instanceof Date) || isNaN(parsedDate.getTime())) {
+    throw new Error("Invalid date passed to updateDateDue");
+  }
+
+  await prisma.todo.update({
+    where: { id },
+    data: {
+      date_due: parsedDate,
+    },
+  });
+};
+
+export const updateTodo = async (id: number, data: Partial<Todo>) => {
+  await prisma.todo.update({
+    where: {
+      id: id,
+    },
+    data: data,
+  });
 };

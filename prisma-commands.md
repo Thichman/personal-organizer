@@ -18,3 +18,10 @@
 `ts
     npx prisma studio
     `
+
+## Generate the schema
+
+**../app/generated/prisma directory**
+`ts
+    npx prisma generate
+    `

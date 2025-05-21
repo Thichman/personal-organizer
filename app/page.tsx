@@ -1,15 +1,22 @@
-'use client'
+"use client";
 
 import { SetStateAction, useEffect, useState } from "react";
 import { Todo } from "./generated/prisma";
 import { getTodos } from "@/queries/todos";
-import { addItem, updateHidden, updateDone, updateDateDue, updatePriority, updateNotes } from "@/queries/todos";
+import {
+  addItem,
+  updateHidden,
+  updateDone,
+  updateDateDue,
+  updatePriority,
+  updateNotes,
+} from "@/queries/todos";
 import TodoSection from "./components/todo-section";
 
 export default function Home() {
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [inputValue, setInputValue] = useState('');
-  const [inputValue2, setInputValue2] = useState('');
+  const [inputValue, setInputValue] = useState("");
+  const [inputValue2, setInputValue2] = useState("");
 
   useEffect(() => {
     const fetchTodos = async () => {
@@ -28,21 +35,25 @@ export default function Home() {
     loadTodos();
   }, []);
 
-  const handleSubmitPersonal = (event: { preventDefault: () => void; }) => {
+  const handleSubmitPersonal = (event: { preventDefault: () => void }) => {
     event.preventDefault();
-    mySubmitFunction(inputValue, 'personal');
+    mySubmitFunction(inputValue, "personal");
   };
 
-  const handleSubmitHellion = (event: { preventDefault: () => void; }) => {
+  const handleSubmitHellion = (event: { preventDefault: () => void }) => {
     event.preventDefault();
-    mySubmitFunction(inputValue2, 'hellion');
+    mySubmitFunction(inputValue2, "hellion");
   };
 
-  const handleChange = (event: { target: { value: SetStateAction<string>; }; }) => {
+  const handleChange = (event: {
+    target: { value: SetStateAction<string> };
+  }) => {
     setInputValue(event.target.value);
   };
 
-  const handleChange2 = (event: { target: { value: SetStateAction<string>; }; }) => {
+  const handleChange2 = (event: {
+    target: { value: SetStateAction<string> };
+  }) => {
     setInputValue2(event.target.value);
   };
 
@@ -50,8 +61,8 @@ export default function Home() {
     await addItem(inputValue, table);
     const todos = await getTodos();
     setTodos(todos);
-    setInputValue('');
-    setInputValue2('');
+    setInputValue("");
+    setInputValue2("");
   };
 
   const handleToggleDone = async (id: number, done: boolean) => {
@@ -82,8 +93,12 @@ export default function Home() {
   return (
     <div className="min-h-screen p-8 sm:p-12 bg-gray-900 font-sans text-white">
       <header className="text-center mb-12">
-        <h1 className="text-5xl font-bold tracking-tight">📝 Personal Organizer</h1>
-        <p className="text-gray-400 mt-2">Stay on top of your goals and tasks</p>
+        <h1 className="text-5xl font-bold tracking-tight">
+          📝 Personal Organizer
+        </h1>
+        <p className="text-gray-400 mt-2">
+          Stay on top of your goals and tasks
+        </p>
       </header>
 
       <main className="flex flex-col items-center gap-12 space-y-8">
